@@ -6,6 +6,17 @@ import android.preference.PreferenceManager;
 
 public class WipiwayUtils {
 	
+	public static final String SMS_TRIGGER_KEYWORD = "Wipiway";
+	
+	public static final String INTENT_EXTRA_KEY_ACTION = "INTENT_EXTRA_KEY_ACTION";
+	public static final String INTENT_EXTRA_KEY_SMS_CONTENT = "INTENT_EXTRA_KEY_SMS_CONTENT";
+	public static final String INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER = "INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER";
+	
+	
+	public static final String INTENT_EXTRA_VALUE_ACTION_CALL = "INTENT_EXTRA_KEY_ACTION_CALL";
+	public static final String INTENT_EXTRA_VALUE_ACTION_CALL_SILENT = "INTENT_EXTRA_KEY_ACTION_CALL_SILENT";
+	public static final String INTENT_EXTRA_VALUE_ACTION_GET_CONTACT = "INTENT_EXTRA_KEY_ACTION_GET_CONTACT";
+	
 	public static final String FLAG_FIRST_VISIT = "FLAG_FIRST_VISIT";
 	
 //	public static boolean isSmsServiceRegistered(Context context) {
