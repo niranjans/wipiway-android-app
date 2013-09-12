@@ -36,7 +36,7 @@
 
         <receiver
             android:name=".SmsBroadcastReceiver"
-            android:enabled="false" >
+            android:enabled="true" >
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
