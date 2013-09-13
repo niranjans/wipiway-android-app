@@ -21,6 +21,8 @@ public class WipiwayUtils {
 	
 	public static final String FLAG_FIRST_VISIT = "FLAG_FIRST_VISIT";
 	
+	public static final String PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER = "PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER";
+	public static final long ACTIVE_SESSION_TIME_LIMIT = 120000;	// 2 mins - Time in milis 1000 * 60 * 2
    
 	/*
 	 * Wipiway SMS Modes of Interaction:
@@ -72,18 +74,72 @@ public class WipiwayUtils {
 	public static boolean isFirstVisit(Context context) {
 		
 		// Returns true if this is first visit of the user
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(WipiwayUtils.FLAG_FIRST_VISIT, true); 
+		//return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(WipiwayUtils.FLAG_FIRST_VISIT, true);
+		
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		return prefs.getBoolean(WipiwayUtils.FLAG_FIRST_VISIT, true);
 				
 	}
 	
 	public static void unsetFirstVisit(Context context, boolean flag) {
 		// Set flag to false
 		if(isFirstVisit(context)){
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putBoolean(WipiwayUtils.FLAG_FIRST_VISIT, false);
+			
+			SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+			
+			
+			prefs.edit().putBoolean(WipiwayUtils.FLAG_FIRST_VISIT, false).commit();
 		}
 				
+	}
+	
+	// Check if Active session with this phone number present -- quick way to check for each incoming message without checking the database
+	public static boolean isActiveSessionPresent(Context context, String phoneNumber ) {
+		
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		// Is the phoneNumber stored in preference
+		if(prefs.getString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, "NIL").equalsIgnoreCase(phoneNumber)) {
+			
+			// Now check if the time is within the Active Session time limit
+			Long timeDifference = System.currentTimeMillis() - prefs.getLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0);
+			if( timeDifference < ACTIVE_SESSION_TIME_LIMIT){
+				
+				// Update with new time
+				prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
+				return true;
+			} else {
+				
+				// Time ran out. Close session
+				resetActiveSessionPresent(context);
+				return false;
+			}
+			
+			
+		}
+		
+		
+		return false;
+		
+	}
+	
+	public static void setActiveSessionPresent(Context context, String phoneNumber) {
+		
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, phoneNumber).commit();
+		prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
+	
+	}
+	
+	public static void resetActiveSessionPresent(Context context) {
+		
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, "NIL").commit();
+		prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0).commit();
+	
 	}
 
 	

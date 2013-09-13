@@ -28,26 +28,30 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				.getDisplayMessageBody().toLowerCase().trim();
 		ArrayList<String> wordsList = getWords(smsContent);
 
-		// Check if incoming SMS was meant for WipiWay
-		if (wordsList.size() > 0
-				&& wordsList.get(0).toString()
-						.equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD)) {
+		
+		if (wordsList.size() > 0 ) {
 			
-			// Start activity
-			Intent i = new Intent(context, StatusActivity.class);
-			
-			// Let the other end know where the intent is generated from (for future proofing)
-			i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_METHOD_GENERATED_FROM, WipiwayUtils.INTENT_EXTRA_VALUE_METHOD_GENERATED_FROM_SMS_RECEIVER);	
-			i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
-					senderPhoneNumber);
-			i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_RECEIVED_TIME, messageReceivedTime.toString());
-			i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
-			i.putStringArrayListExtra(
-					WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-			
-			context.startActivity(i);
+			// If message contains the keyword OR an active session with the Phone number is present
+			if( wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) || 
+						WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber)) {
+				
+				// Good to go, move forward
+				
+				Intent i = new Intent(context, SmsIntentService.class);
+			    
+				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
+						senderPhoneNumber);
+				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
+				i.putStringArrayListExtra(
+						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
+
+				// Start the intent service
+			    context.startService(i);
+				
+			}
+		
 		}
+
 
 	}
 
