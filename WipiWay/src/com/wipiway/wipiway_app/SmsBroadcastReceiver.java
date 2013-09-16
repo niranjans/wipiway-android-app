@@ -31,9 +31,10 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		
 		if (wordsList.size() > 0 ) {
 			
+			Boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
+			
 			// If message contains the keyword OR an active session with the Phone number is present
-			if( wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) || 
-						WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber)) {
+			if( wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) || isActiveSession) {
 				
 				// Good to go, move forward
 				
@@ -44,6 +45,8 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
 				i.putStringArrayListExtra(
 						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
+				
+				
 
 				// Start the intent service
 			    context.startService(i);

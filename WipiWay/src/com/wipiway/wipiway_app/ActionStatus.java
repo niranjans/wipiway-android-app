@@ -23,6 +23,13 @@ public class ActionStatus {
 	
 	public ActionStatus() {
 
+		id = 0;
+		phoneNumber = null;
+		last_message_received = 0;
+		mode = 0;
+		stage = 0;
+		action = 0;
+		argument = null;
 		
 	}
 	

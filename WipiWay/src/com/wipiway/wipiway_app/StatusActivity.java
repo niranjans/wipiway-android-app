@@ -29,7 +29,7 @@ public class StatusActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
         
-        
+        setSlidingActionBarEnabled(false);
         // Testing database insert
   /*      
         button1 = (Button) findViewById(R.id.button1);
@@ -61,7 +61,16 @@ public class StatusActivity extends BaseActivity {
         });
         
 
+        ActionStatus as = new ActionStatus();
+        long id = as.getId();
+        
+        if( id == null) {
+        	
+        }
+
    */
+        
+
 
         Intent intent = getIntent();
         

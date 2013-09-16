@@ -47,7 +47,7 @@ public class WipiwayUtils {
      *            
      *         		| Stage |
      *            
-     * Mode 1  	=> 		0 - complete
+     * Mode 1  	=> 		10 - complete
      * 
      * Mode 2	=> 		1 - get password
      * 
@@ -64,13 +64,7 @@ public class WipiwayUtils {
     
     
     
-    
-//	public static boolean isSmsServiceRegistered(Context context) {
-//		
-//		return 
-//				
-//	}
-//	
+	
 	public static boolean isFirstVisit(Context context) {
 		
 		// Returns true if this is first visit of the user
@@ -141,6 +135,8 @@ public class WipiwayUtils {
 		prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0).commit();
 	
 	}
+	
+	 
 
 	
 	

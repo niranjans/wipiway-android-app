@@ -20,6 +20,7 @@ public class SmsIntentService extends IntentService {
 		// Main logic
 		
 		
+		
 	}
 
 }
