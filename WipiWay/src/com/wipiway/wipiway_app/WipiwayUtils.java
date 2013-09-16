@@ -97,11 +97,11 @@ public class WipiwayUtils {
 		if(prefs.getString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, "NIL").equalsIgnoreCase(phoneNumber)) {
 			
 			// Now check if the time is within the Active Session time limit
-			Long timeDifference = System.currentTimeMillis() - prefs.getLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0);
+			Long timeDifference = System.currentTimeMillis() - prefs.getLong(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0);
 			if( timeDifference < ACTIVE_SESSION_TIME_LIMIT){
 				
 				// Update with new time
-				prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
+				prefs.edit().putLong(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
 				return true;
 			} else {
 				
@@ -123,7 +123,7 @@ public class WipiwayUtils {
 		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
 		
 		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, phoneNumber).commit();
-		prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
+		prefs.edit().putLong(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()).commit();
 	
 	}
 	
@@ -132,7 +132,7 @@ public class WipiwayUtils {
 		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
 		
 		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_PHONE_NUMBER, "NIL").commit();
-		prefs.edit().putLong(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0).commit();
+		prefs.edit().putLong(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, 0).commit();
 	
 	}
 	

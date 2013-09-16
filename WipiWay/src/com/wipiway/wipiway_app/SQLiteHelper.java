@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class WipiwaySQLiteHelper extends SQLiteOpenHelper {
+public class SQLiteHelper extends SQLiteOpenHelper {
 
 	private static final String TAG = "WipiwayDB";
 	
-	private static WipiwaySQLiteHelper helperInstance;
+	private static SQLiteHelper helperInstance;
 
 	
     private static final String DATABASE_NAME = "wipiwayDatabase.db";
@@ -53,16 +53,16 @@ public class WipiwaySQLiteHelper extends SQLiteOpenHelper {
 			+		 "FOREIGN KEY(" + C_ID + ") REFERENCES " +  TABLE_ACTION_STATUS + "( " + C_ID + ")"
 			+ " );";
 	 
-	public WipiwaySQLiteHelper(Context context) {
+	public SQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION); 
 		
 	}
 
 	// To maintain 1 connection from different threads - http://touchlabblog.tumblr.com/post/24474750219/single-sqlite-connection
-    public static synchronized WipiwaySQLiteHelper getHelper(Context context)
+    public static synchronized SQLiteHelper getHelper(Context context)
     {
         if (helperInstance == null) {
-        	helperInstance = new WipiwaySQLiteHelper(context);
+        	helperInstance = new SQLiteHelper(context);
         }
         	
         return helperInstance;

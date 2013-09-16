@@ -11,10 +11,10 @@ import android.database.sqlite.SQLiteDatabase;
 public class WipiwayDataSource {
 
 	//private SQLiteDatabase database;
-	private WipiwaySQLiteHelper dbHelper;
+	private SQLiteHelper dbHelper;
 	
 	public WipiwayDataSource(Context context) {
-	    dbHelper = WipiwaySQLiteHelper.getHelper(context);
+	    dbHelper = SQLiteHelper.getHelper(context);
 	  }
 	
 //	public void open() throws SQLException {
@@ -32,14 +32,14 @@ public class WipiwayDataSource {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		ContentValues values = new ContentValues();
-		values.put(WipiwaySQLiteHelper.C_PHONE_NUMBER, phoneNumber);
-		values.put(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 	// Current time
-		values.put(WipiwaySQLiteHelper.C_MODE, mode);
-		values.put(WipiwaySQLiteHelper.C_STAGE, stage);
-		values.put(WipiwaySQLiteHelper.C_ACTION, action);
-		values.put(WipiwaySQLiteHelper.C_ARGUMENT, argument);
+		values.put(SQLiteHelper.C_PHONE_NUMBER, phoneNumber);
+		values.put(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 	// Current time
+		values.put(SQLiteHelper.C_MODE, mode);
+		values.put(SQLiteHelper.C_STAGE, stage);
+		values.put(SQLiteHelper.C_ACTION, action);
+		values.put(SQLiteHelper.C_ARGUMENT, argument);
 		
-		database.insert(WipiwaySQLiteHelper.TABLE_ACTION_STATUS, null, values);
+		database.insert(SQLiteHelper.TABLE_ACTION_STATUS, null, values);
 		
 	}
 	
@@ -47,14 +47,14 @@ public class WipiwayDataSource {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		ContentValues values = new ContentValues();
-		values.put(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 	// Current time
-		values.put(WipiwaySQLiteHelper.C_MODE, mode);
-		values.put(WipiwaySQLiteHelper.C_STAGE, stage);
-		values.put(WipiwaySQLiteHelper.C_ACTION, action);
-		values.put(WipiwaySQLiteHelper.C_ARGUMENT, argument);
+		values.put(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 	// Current time
+		values.put(SQLiteHelper.C_MODE, mode);
+		values.put(SQLiteHelper.C_STAGE, stage);
+		values.put(SQLiteHelper.C_ACTION, action);
+		values.put(SQLiteHelper.C_ARGUMENT, argument);
 				
 		// Update the row with the new info. Match with ID
-		database.update(WipiwaySQLiteHelper.TABLE_ACTION_STATUS, values, WipiwaySQLiteHelper.C_ID + "=" + id,  null);
+		database.update(SQLiteHelper.TABLE_ACTION_STATUS, values, SQLiteHelper.C_ID + "=" + id,  null);
 		
 	}
 	
@@ -65,8 +65,8 @@ public class WipiwayDataSource {
 		
 		SQLiteDatabase database = dbHelper.getReadableDatabase();
 		
-		String query = "Select * from " + WipiwaySQLiteHelper.TABLE_ACTION_STATUS + " where " + WipiwaySQLiteHelper.C_PHONE_NUMBER + " = " + phoneNumber 
-						+ " order by " + WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED + " DESC Limit 1";
+		String query = "Select * from " + SQLiteHelper.TABLE_ACTION_STATUS + " where " + SQLiteHelper.C_PHONE_NUMBER + " = " + phoneNumber 
+						+ " order by " + SQLiteHelper.C_LAST_MESSAGE_RECEIVED + " DESC Limit 1";
 		
 		Cursor cursor = database.rawQuery(query,null);
 		
@@ -75,11 +75,11 @@ public class WipiwayDataSource {
 		if (cursor != null) {
             cursor.moveToFirst();
 
-            values.put(WipiwaySQLiteHelper.C_ID, cursor.getInt(cursor.getColumnIndex(WipiwaySQLiteHelper.C_ID)));
-            values.put(WipiwaySQLiteHelper.C_MODE, cursor.getInt(cursor.getColumnIndex(WipiwaySQLiteHelper.C_MODE)));
-            values.put(WipiwaySQLiteHelper.C_STAGE, cursor.getInt(cursor.getColumnIndex(WipiwaySQLiteHelper.C_STAGE)));
-            values.put(WipiwaySQLiteHelper.C_ACTION, cursor.getInt(cursor.getColumnIndex(WipiwaySQLiteHelper.C_ACTION)));
-            values.put(WipiwaySQLiteHelper.C_ARGUMENT, cursor.getString(cursor.getColumnIndex(WipiwaySQLiteHelper.C_ARGUMENT)));
+            values.put(SQLiteHelper.C_ID, cursor.getInt(cursor.getColumnIndex(SQLiteHelper.C_ID)));
+            values.put(SQLiteHelper.C_MODE, cursor.getInt(cursor.getColumnIndex(SQLiteHelper.C_MODE)));
+            values.put(SQLiteHelper.C_STAGE, cursor.getInt(cursor.getColumnIndex(SQLiteHelper.C_STAGE)));
+            values.put(SQLiteHelper.C_ACTION, cursor.getInt(cursor.getColumnIndex(SQLiteHelper.C_ACTION)));
+            values.put(SQLiteHelper.C_ARGUMENT, cursor.getString(cursor.getColumnIndex(SQLiteHelper.C_ARGUMENT)));
             
         }
 		
@@ -94,7 +94,7 @@ public class WipiwayDataSource {
 		
 		ContentValues values = populateContentValues(actionStatus);
 		
-		database.insert(WipiwaySQLiteHelper.TABLE_ACTION_STATUS, null, values);
+		database.insert(SQLiteHelper.TABLE_ACTION_STATUS, null, values);
 		
 	}
 	
@@ -104,7 +104,7 @@ public class WipiwayDataSource {
 		ContentValues values = populateContentValues(actionStatus);
 				
 		// Update the row with the new info. Match with ID
-		database.update(WipiwaySQLiteHelper.TABLE_ACTION_STATUS, values, WipiwaySQLiteHelper.C_ID + " = " + actionStatus.getId(),  null);
+		database.update(SQLiteHelper.TABLE_ACTION_STATUS, values, SQLiteHelper.C_ID + " = " + actionStatus.getId(),  null);
 		
 	}
 	
@@ -113,22 +113,22 @@ public class WipiwayDataSource {
 		ContentValues values = new ContentValues();
 		
 		if(actionStatus.getPhoneNumber()!=null)
-			values.put(WipiwaySQLiteHelper.C_PHONE_NUMBER, actionStatus.getPhoneNumber());
+			values.put(SQLiteHelper.C_PHONE_NUMBER, actionStatus.getPhoneNumber());
 		
 		// while touching database, always update with current time
-		values.put(WipiwaySQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 
+		values.put(SQLiteHelper.C_LAST_MESSAGE_RECEIVED, System.currentTimeMillis()); 
 		
 		if(actionStatus.getMode() != 0)
-			values.put(WipiwaySQLiteHelper.C_MODE, actionStatus.getMode());
+			values.put(SQLiteHelper.C_MODE, actionStatus.getMode());
 		
 		if(actionStatus.getStage() != 0)
-			values.put(WipiwaySQLiteHelper.C_STAGE, actionStatus.getStage());
+			values.put(SQLiteHelper.C_STAGE, actionStatus.getStage());
 		
 		if(actionStatus.getAction() != 0)
-			values.put(WipiwaySQLiteHelper.C_ACTION, actionStatus.getAction());
+			values.put(SQLiteHelper.C_ACTION, actionStatus.getAction());
 		
 		if(actionStatus.getArgument() != null)
-			values.put(WipiwaySQLiteHelper.C_ARGUMENT, actionStatus.getArgument());
+			values.put(SQLiteHelper.C_ARGUMENT, actionStatus.getArgument());
 		
 		return values;
 		
