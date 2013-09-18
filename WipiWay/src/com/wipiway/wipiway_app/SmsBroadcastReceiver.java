@@ -43,6 +43,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
 						senderPhoneNumber);
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
+				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_ACTIVE_SESSION, isActiveSession);
 				i.putStringArrayListExtra(
 						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
 				
@@ -74,7 +75,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
 	public ArrayList<String> getWords(String msg) {
 
-		StringTokenizer token = new StringTokenizer(msg);
+		StringTokenizer token = new StringTokenizer(msg, ".,! ()[]?");
 
 		ArrayList<String> wordsList = new ArrayList<String>();
 
