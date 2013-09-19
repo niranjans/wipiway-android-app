@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Service calss that gets started when a trigger command for the app has been received
@@ -22,6 +23,8 @@ public class SmsIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
+		Log.d("SmsIntentService", "onHandleIntent");
+
 		// Main logic
 		context = SmsIntentService.this;
 		String senderPhoneNumber = intent.getStringExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER);
@@ -33,6 +36,8 @@ public class SmsIntentService extends IntentService {
 			
 		} else {
 			// New command
+			Log.d("SmsIntentService", "onHandleIntent - New command start");
+
 			
 			// TODO - Check password first and then proceed
 
@@ -49,6 +54,8 @@ public class SmsIntentService extends IntentService {
 				controller.logicNewCommandWords2(senderPhoneNumber, wordsList.get(1));
 				break;
 			case 3:
+				Log.d("SmsIntentService", "onHandleIntent - New command start - 3 words");
+
 				controller.logicNewCommandWords3(senderPhoneNumber, wordsList.get(1), wordsList.get(2));
 				break;
 			case 4:

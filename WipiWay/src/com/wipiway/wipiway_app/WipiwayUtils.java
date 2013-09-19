@@ -4,7 +4,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
  
 /**
@@ -15,7 +17,7 @@ import android.util.Log;
  *  This class provides common static utility methods and constants used regularly in the App.
  */
 public class WipiwayUtils {
-	
+
 	public static final String SMS_TRIGGER_KEYWORD = "Wipiway";
 	
 	public static final String INTENT_EXTRA_KEY_METHOD_GENERATED_FROM = "intent_extra_key_method_generated_from";
@@ -24,6 +26,8 @@ public class WipiwayUtils {
 	public static final String INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST = "intent_extra_key_sms_content_arraylist";
 	public static final String INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER = "intent_extra_key_sms_sender_phone_number";
 	public static final String INTENT_EXTRA_KEY_IS_ACTIVE_SESSION = "intent_extra_key_is_active_session";
+	public static final String INTENT_EXTRA_KEY_PERFORM_ACTION = "intent_extra_key_perform_action";
+	public static final String INTENT_EXTRA_KEY_IS_SILENT_CALL = "intent_extra_key_is_silent_call";
 
 	
 	public static final String INTENT_EXTRA_VALUE_METHOD_GENERATED_FROM_SMS_RECEIVER = "intent_extra_value_method_generated_from_sms_receiver";
@@ -70,13 +74,25 @@ public class WipiwayUtils {
     public static final int MODE_BREAK_ACTION_PASSWORD_STAGE_ACTION_PASSWORD = 1;
     public static final int MODE_PASSWORD_BREAK_ACTION_STAGE_ACTION = 1;
 
+    // Actions that can be done by the app
+    public static final int ACTION_CALL = 1;
+    public static final int ACTION_CALL_ME = 2;
+    public static final int ACTION_CALL_ME_SILENT = 3;
+    public static final int ACTION_CALL_ME_PHONE = 4;
+    public static final int ACTION_CALL_ME_PHONE_SILENT = 5;
+    
+    public static final int ACTION_GET_CONTACT = 6;
+
+
+
+
     
     public static final int STAGE_COMPLETE = 10;
 	
 	public static boolean isFirstVisit(Context context) {
-		
 		// Returns true if this is first visit of the user
 		//return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(WipiwayUtils.FLAG_FIRST_VISIT, true);
+		
 		
 		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
 		
@@ -138,7 +154,6 @@ public class WipiwayUtils {
 
 		
 	}
-	
 	
 	
 	/* 
@@ -266,6 +281,10 @@ public class WipiwayUtils {
 		prefs.edit().putInt(PREFS_KEY_STAGE, 0).commit();
 		prefs.edit().putInt(PREFS_KEY_MODE, 0).commit();
 	}
+	
+	
+	
+
 	
 	 
 

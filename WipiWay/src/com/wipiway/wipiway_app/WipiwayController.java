@@ -26,22 +26,54 @@ public class WipiwayController {
 		
 	}
 	
+	/**
+	 * 
+	 * Method to handle action to be performed with 1 trigger word 
+	 * 
+	 * @param phoneNumber Phone number associated with the action.
+	 */
 	public void logicNewCommandWords1(String phoneNumber){
 		sendMenuSms(phoneNumber);
 	}
 	
+	/**
+	 * Method to handle logic with 2 words (one of which is the trigger word)
+	 * 
+	 * @param phoneNumber Phone number associated with the action.
+	 * @param word2 Second word in the message (where first word is the Trigger keyword)
+	 */
 	public void logicNewCommandWords2(String phoneNumber, String word2){
 		
 		if(word2.equalsIgnoreCase("call")) {
-			// TODO code to call phone 
-		}
+			Intent intent = new Intent(context, StatusActivity.class);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
+			
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);		}
 	}
 	
+	
+	/**
+	 * Method to handle logic with 3 words (one of which is the trigger word)
+	 * 
+	 * @param phoneNumber Phone number associated with the action.
+	 * @param word2 Second word in the message (where first word is the Trigger keyword)
+	 * @param word3 Third word in the message 
+	 */
 	public void logicNewCommandWords3(String phoneNumber, String word2, String word3){
-		
+		Log.d("WipiwayController", "logicNewCommandWords3 - start");
+
 		if(word2.equalsIgnoreCase("call")) {
-			if(word3.equalsIgnoreCase("me")){
-				// TODO code to call phone
+			if(word3.equalsIgnoreCase("me")){				
+				Intent intent = new Intent(context, StatusActivity.class);
+				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
+				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
+				
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
 			} 
 		}
 	}
@@ -51,8 +83,13 @@ public class WipiwayController {
 		if(word2.equalsIgnoreCase("call")) {
 			if(word3.equalsIgnoreCase("me")){
 				if(word4.equalsIgnoreCase("silent")){
-					// TODO code to call phone	
-				}
+					Intent intent = new Intent(context, StatusActivity.class);
+					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
+					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, true);
+					
+	                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+	                context.startActivity(intent);				}
 			} 
 		} else if(word2.equalsIgnoreCase("get")){
 			if(word3.equalsIgnoreCase("contact")){
@@ -70,6 +107,11 @@ public class WipiwayController {
 		}
 	}
 	
+	/**
+	 * Method to handle logic when command has unkown number of words
+	 * 
+	 * @param phoneNumber Phone number associated with the action.
+	 */
 	public void logicNewCommandWordsDefault(String phoneNumber){
 		sendMenuSms(phoneNumber);
 	}

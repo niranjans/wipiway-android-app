@@ -9,12 +9,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.text.format.Time;
+import android.util.Log;
 
+/**
+ * @author Niranjan Singh - singh@wipiway.com
+ * 
+ * Class to receive new SMS broacasts and begin the process of checking / controlling. 
+ *
+ */
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
+		Log.d("SmsBroadcastReceiver", "onReceive start");
+		
 		// Get message received timestamp
 		Time messageReceivedTime = new Time();
 		messageReceivedTime.setToNow();
@@ -46,9 +55,10 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_ACTIVE_SESSION, isActiveSession);
 				i.putStringArrayListExtra(
 						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
-				
-				
 
+				Log.d("SmsBroadcastReceiver", "just before starting service");
+
+				
 				// Start the intent service
 			    context.startService(i);
 				

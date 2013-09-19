@@ -10,11 +10,14 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * @author Niranjan Singh - singh@wipiway.com
+ * 
+ * Main activity which shows the Status of the remote controlling service and also shows the history logs.
+ *
+ */
 public class StatusActivity extends BaseActivity {
-	 
-	private WipiwayController wipiwayController = null;
-	private Button button1;
-	private Button button2;
+	 private int action;
 	
 	
 
@@ -30,46 +33,13 @@ public class StatusActivity extends BaseActivity {
         setContentView(R.layout.activity_status);
         
         setSlidingActionBarEnabled(false);
-        // Testing database insert
-  /*      
-        button1 = (Button) findViewById(R.id.button1);
         
-        button1.setOnClickListener(new View.OnClickListener() {
-        	
-        	@Override
-            public void onClick(View v) {
-            	
-                WipiwayDataSource datasourse = new WipiwayDataSource(StatusActivity.this);
-                
-                datasourse.insertActionStatus("222222222", 2, 1, 3, null);
-            
-            }
-        });
-        
-        button2 = (Button) findViewById(R.id.button2);
-
-        button2.setOnClickListener(new View.OnClickListener() {
-        	
-        	@Override
-            public void onClick(View v) {
-            	
-                WipiwayDataSource datasourse = new WipiwayDataSource(StatusActivity.this);
-                
-                ContentValues values = datasourse.getLastSession("222222222");
-                datasourse.updateActionStatus(values.getAsInteger(WipiwaySQLiteHelper.C_ID), 9, 9, 9, null);
-            }
-        });
-        
-
-        ActionStatus as = new ActionStatus();
-        long id = as.getId();
-        
-        if( id == null) {
-        	
+        // Always gets a value only if generated from the service
+        Intent intent = getIntent();
+        action = intent.getIntExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, 0);
+        if( action != 0) {
+        	performAction(intent, action);
         }
-
-   */
-        
 
     }
 	
@@ -79,7 +49,37 @@ public class StatusActivity extends BaseActivity {
 	public void onNewIntent(Intent intent){
 		Log.d("StatucActivity", "on new intent");
 		
+        // Always gets a value only if generated from the service
+        action = intent.getIntExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, 0);
+        if( action != 0) {
+        	performAction(intent, action);
+        }
 
+
+		
+	}
+	
+	public void performAction(Intent intent, int action) {
+		
+		switch(action) {
+		case WipiwayUtils.ACTION_CALL:
+		case WipiwayUtils.ACTION_CALL_ME:
+		case WipiwayUtils.ACTION_CALL_ME_PHONE:
+		case WipiwayUtils.ACTION_CALL_ME_SILENT:
+		case WipiwayUtils.ACTION_CALL_ME_PHONE_SILENT:
+			
+			String phoneNumber = intent.getStringExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER);
+			boolean isSilentCall = intent.getBooleanExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
+			
+			CallPhone callPhone = new CallPhone();
+			callPhone.startCall(StatusActivity.this, phoneNumber, isSilentCall);
+			
+			break;
+
+			
+			
+		
+		}
 		
 	}
 
