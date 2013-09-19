@@ -82,6 +82,9 @@ public class WipiwayController {
 			if(word3.equalsIgnoreCase("battery")){
 				WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
 			}
+		} else if(word2.equalsIgnoreCase("open")) {
+			// Last word is a URL link
+			WipiwayUtils.openUrl(context, word3);	
 		}
 	}
 	

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
@@ -345,6 +346,18 @@ public class WipiwayUtils {
 	    }
 
 	    return ((float)level / (float)scale) * 100.0f; 
+	}
+	
+	/* 
+	 * *****************************************************
+	 * Opening URL links stuff 
+	 * *****************************************************
+	 */
+	
+	public static void openUrl(Context context, String url) {
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		context.startActivity(i);
 	}
 	
 	/* 

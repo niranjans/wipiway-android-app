@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -40,6 +41,9 @@ public class StatusActivity extends BaseActivity {
         if( action != 0) {
         	performAction(intent, action);
         }
+        
+        // Comment of http://stackoverflow.com/a/3859298/804503 -- time_ago_in_words
+       // DateUtils.getRelativeTimeSpanString(startTime);
 
     }
 	
