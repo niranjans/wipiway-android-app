@@ -1,9 +1,20 @@
 package com.wipiway.wipiway_app;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.os.BatteryManager;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -41,6 +52,7 @@ public class WipiwayUtils {
 	public static final String PREFS_KEY_LAST_MESSAGE_RECEIVED = "prefs_key_last_message_received";
 	public static final String PREFS_KEY_MODE = "prefs_key_mode";
 	public static final String PREFS_KEY_STAGE = "prefs_key_stage";
+	public static final String PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA = "prefs_key_active_session_string_extra";
 	
 	public static final long ACTIVE_SESSION_TIME_LIMIT = 120000;	// 2 mins - Time in milis 1000 * 60 * 2
    
@@ -67,6 +79,10 @@ public class WipiwayUtils {
      */
     public static final int MODE_PASSWORD_BREAK_ACTION = 5;
     
+    /**
+     * Example: Yes (as response to get contact dad => Dad: 122121..More? --> Yes )
+     */
+    public static final int MODE_YES_MORE = 6;
     
     public static final int MODE_ACTION_BREAK_PASSWORD_STAGE_ACTION = 1;
     public static final int MODE_BREAK_ACTION_BREAK_PASSWORD_STAGE_ACTION = 1;
@@ -82,12 +98,23 @@ public class WipiwayUtils {
     public static final int ACTION_CALL_ME_PHONE_SILENT = 5;
     
     public static final int ACTION_GET_CONTACT = 6;
-
-
-
-
     
     public static final int STAGE_COMPLETE = 10;
+
+    // Static variables to search contacts database
+	private static String CONTACT_SEARCH_WHERE_CONDITION = ContactsContract.Data.MIMETYPE
+			+ " = '" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+			+ "'" + " AND " + ContactsContract.Data.DISPLAY_NAME + " LIKE ?";
+
+	private static String[] CONTACT_SEARCH_PROJECTION = { ContactsContract.Data.DISPLAY_NAME,
+			ContactsContract.Data.DATA1, ContactsContract.Data.DATA2 };
+
+	private static String CONTACT_SEARCH_SORT_ORDER = ContactsContract.Data.DISPLAY_NAME;
+	
+	public static final int LENGTH_OF_REPLY_SMS_MESSAGE = 160;
+
+
+
 	
 	public static boolean isFirstVisit(Context context) {
 		// Returns true if this is first visit of the user
@@ -125,6 +152,8 @@ public class WipiwayUtils {
 	 * @param body content of the SMS message
 	 */
 	public static void sendSms(String phoneNumber, String body) {
+		
+		Log.d("WipiwayUtils", "Sending SMS message - " + body + " ... Phone number - " + phoneNumber);
 
 		SmsManager sms = SmsManager.getDefault();
         try {
@@ -141,7 +170,7 @@ public class WipiwayUtils {
 	 * 
 	 * @param phoneNumber The phone number that the message is to be sent to
 	 * @param body content of the SMS message
-	 * @param sentPI Pending intent that receives broadcast of when message is sent
+	 * @param sentPI Pending intent that receives broadcast of when message is sent (To write the action into the database if sent successfully)
 	 */
 	public static void sendSms(String phoneNumber, String body, PendingIntent sentPI) {
 
@@ -155,6 +184,168 @@ public class WipiwayUtils {
 		
 	}
 	
+	/* 
+	 * *****************************************************
+	 * Searching contacts stuff
+	 * *****************************************************
+	 */
+	
+	public static void searchAndSendContactInfo(Context context, String phoneNumber, String searchName) {
+		
+		String replyMessageBody;
+
+		Cursor resultCursor = searchContact(context, searchName);
+		resultCursor.moveToFirst();
+
+		if (resultCursor.isAfterLast() == true) {
+			// No contacts found
+			replyMessageBody = "Sorry, no contact in the name of '" + searchName + "' found.";
+			sendSms(phoneNumber, replyMessageBody);
+			
+		} else {
+			// Contacts found!
+			replyMessageBody = buildContactsReplyMessage(context, phoneNumber, resultCursor);
+			sendSms(phoneNumber, replyMessageBody);
+		}
+	
+		
+	}
+	
+	
+	private static Cursor searchContact(Context context, String searchName) {
+		
+		ContentResolver contentResolver = context.getContentResolver();
+		
+		String searchArgs = "%" + searchName.trim() + "%";
+
+		String[] WHERE_CONDITION_ARGS = { searchArgs };
+		
+		// ---------- Cursor creation
+		Cursor cursor = contentResolver.query(
+				ContactsContract.Data.CONTENT_URI, CONTACT_SEARCH_PROJECTION,
+				CONTACT_SEARCH_WHERE_CONDITION, WHERE_CONDITION_ARGS, CONTACT_SEARCH_SORT_ORDER);
+		
+		return cursor;
+	}
+	
+	// Found contacts. Get Names and Numbers --- From ContactCzar App. Refactor later *****
+	private static String buildContactsReplyMessage(Context context, String phoneNumber, Cursor resultCursor) {
+
+		boolean isMessageFull = false;
+		boolean isDuplicateNumber = false;
+		
+		StringBuffer replyMessage = new StringBuffer();
+		StringBuffer remainingReplyMessage = new StringBuffer();	// To track & store for later
+		
+		String previousName = "";
+		String currentName = "";
+		
+		
+		List<String> listPhoneNumbers = new ArrayList<String>();
+		Iterator<String> iteratorListPhoneNumbers;
+		
+		while (resultCursor.isAfterLast() == false) {
+
+			iteratorListPhoneNumbers = listPhoneNumbers.iterator();
+
+			while (iteratorListPhoneNumbers.hasNext()) {
+
+				if (PhoneNumberUtils.compare(resultCursor.getString(1),
+						iteratorListPhoneNumbers.next())) {
+					isDuplicateNumber = true;
+//					Log.d(TAG,
+//							"duplicate numbers! - " + cursor.getString(1));
+
+				}
+
+			}
+
+			// --- if two rows have the exact same no
+			if (isDuplicateNumber) {
+
+				resultCursor.moveToNext();
+
+			} else {
+				currentName = resultCursor.getString(0).trim();
+				
+
+
+				if (currentName.contentEquals(previousName)) {
+
+					if (isMessageFull == false
+							&& (replyMessage.length() + resultCursor
+									.getString(1).length()) < (LENGTH_OF_REPLY_SMS_MESSAGE - 7)) {
+
+						replyMessage.append(", " + resultCursor.getString(1).trim());
+
+					} else {
+						isMessageFull = true;
+						remainingReplyMessage.append(", " + resultCursor.getString(1).trim());
+					}
+
+				} else {
+					if (isMessageFull == false
+							&& (replyMessage.length()
+									+ currentName.length() + resultCursor
+									.getString(1).length()) < (LENGTH_OF_REPLY_SMS_MESSAGE - 7)) {
+
+						replyMessage.append(" " + currentName + ": " + resultCursor.getString(1).trim());
+					} else {
+						remainingReplyMessage.append(" " + currentName + ": " + resultCursor.getString(1).trim());
+						isMessageFull = true;
+
+					}
+				}
+
+				listPhoneNumbers.add(resultCursor.getString(1).trim());
+	
+
+				previousName = currentName;
+				
+
+				resultCursor.moveToNext();
+
+			}
+
+			isDuplicateNumber = false;
+		}
+		
+		
+		if (isMessageFull) {
+			replyMessage.append("..More?");
+			
+			// Populate preference so that the app can handle a "Yes" response.
+			setActiveSessionPresent(context, phoneNumber);
+			setActiveSessionMode(context, MODE_YES_MORE);
+			setActiveSessionStringExtra(context, remainingReplyMessage.toString());
+		}
+		
+		return replyMessage.toString();
+	}
+
+	/* 
+	 * *****************************************************
+	 * Battery level tracking stuff 
+	 * *****************************************************
+	 */
+	
+	public static void sendBatteryLevelSms(Context context, String phoneNumber){
+		String messageBody = "Current battery level is: " + Float.toString(getBatteryLevel(context)) + "%";
+		sendSms(phoneNumber, messageBody);
+	}
+	
+	public static float getBatteryLevel(Context context) {
+	    Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+	    int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+	    int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+	    // Error checking that probably isn't needed but I added just in case.
+	    if(level == -1 || scale == -1) {
+	        return 50.0f;
+	    }
+
+	    return ((float)level / (float)scale) * 100.0f; 
+	}
 	
 	/* 
 	 * *****************************************************
@@ -227,6 +418,18 @@ public class WipiwayUtils {
 	}
 	
 	/**
+	 * Method to get the extra string for active session (example: remaining contacts string)
+	 * 
+	 * @param context Context
+	 * @return Extra String (example: remaining contacts string)
+	 */
+	public static String getActiveSessionStringExtra(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		return prefs.getString(PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA, "");
+	}
+	
+	/**
 	 * Method to set the new assumed Mode of the active session 
 	 * 
 	 * @param context
@@ -250,7 +453,19 @@ public class WipiwayUtils {
 		prefs.edit().putInt(PREFS_KEY_STAGE, stage).commit();
 	}
 	
-	// Mode and stage is supposed to be set separately
+	/**
+	 * Method to set the new extra string for active session (example: remaining contacts string)
+	 * 
+	 * @param context
+	 * @param mode The new extra string for active session (example: remaining contacts string)
+	 */
+	public static void setActiveSessionStringExtra(Context context, String stringExtra) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+
+		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA, stringExtra).commit();
+	}
+	
+	// Mode, stage and ExtraString is supposed to be set separately
 	/**
 	 * Method to set a new active session
 	 * 
@@ -258,6 +473,7 @@ public class WipiwayUtils {
 	 * @param phoneNumber Phone number that is associated with the active session
 	 */
 	public static void setActiveSessionPresent(Context context, String phoneNumber) {
+		resetActiveSessionPresent(context);
 		
 		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
 		
@@ -280,6 +496,7 @@ public class WipiwayUtils {
 		prefs.edit().putLong(PREFS_KEY_LAST_MESSAGE_RECEIVED, 0).commit();
 		prefs.edit().putInt(PREFS_KEY_STAGE, 0).commit();
 		prefs.edit().putInt(PREFS_KEY_MODE, 0).commit();
+		prefs.edit().putString(PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA, "").commit();
 	}
 	
 	

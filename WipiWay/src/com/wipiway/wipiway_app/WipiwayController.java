@@ -51,7 +51,10 @@ public class WipiwayController {
 			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
 			
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);		}
+            context.startActivity(intent);		
+		} else if(word2.equalsIgnoreCase("battery")) {
+			WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
+		}
 	}
 	
 	
@@ -74,7 +77,11 @@ public class WipiwayController {
 				
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-			} 
+			}
+		} else if(word2.equalsIgnoreCase("get")) {
+			if(word3.equalsIgnoreCase("battery")){
+				WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
+			}
 		}
 	}
 	
@@ -93,7 +100,7 @@ public class WipiwayController {
 			} 
 		} else if(word2.equalsIgnoreCase("get")){
 			if(word3.equalsIgnoreCase("contact")){
-				// TODO get contact name - word4
+				WipiwayUtils.searchAndSendContactInfo(context, phoneNumber, word4);
 			}
 		}
 	}
@@ -102,7 +109,7 @@ public class WipiwayController {
 		
 		if(word2.equalsIgnoreCase("get")){
 			if(word3.equalsIgnoreCase("contact")){
-				// TODO get contact name - word4, word5
+					// TODO get contact name - word4, word5
 			}
 		}
 	}

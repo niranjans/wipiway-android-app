@@ -59,6 +59,18 @@ public class StatusActivity extends BaseActivity {
 		
 	}
 	
+	/**
+	 * Method to perform the action from the intent that was sent from the IntentService. 
+	 * 
+	 * Sometimes, this main activity needs to be run on the phone and then the action needs to be performed. 
+	 * For example: This activity is shown just before performing the calling action. 
+	 * 
+	 * It is not necessary to open the activity for the actions but since the screen in going to be woken up, 
+	 * it is a good idea to show Wipiway for the branding. 
+	 * 
+	 * @param intent Intent object coming from the calling component (IntentService)
+	 * @param action Action to be performed. This could have been extracted from the intent but this has already been done before
+	 */
 	public void performAction(Intent intent, int action) {
 		
 		switch(action) {
