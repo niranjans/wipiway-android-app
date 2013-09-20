@@ -366,8 +366,9 @@ public class WipiwayUtils {
 	 */
 	
 	public static void sendBatteryLevelSms(Context context, String phoneNumber){
-		String messageBody = "Current battery level is: " + Float.toString(getBatteryLevel(context)) + "%";
+		String messageBody = "Current battery level is: " + formatDoubleToString(getBatteryLevel(context)) + "%";
 		sendSms(phoneNumber, messageBody);
+		
 	}
 	
 	public static float getBatteryLevel(Context context) {
@@ -381,6 +382,14 @@ public class WipiwayUtils {
 	    }
 
 	    return ((float)level / (float)scale) * 100.0f; 
+	}
+	
+	public static String formatDoubleToString(double d)
+	{
+	    if(d == (int) d)
+	        return String.format("%d",(int)d);
+	    else
+	        return String.format("%s",d);
 	}
 	
 	/* 
