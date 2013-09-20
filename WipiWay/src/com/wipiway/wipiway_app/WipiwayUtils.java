@@ -40,6 +40,8 @@ public class WipiwayUtils {
 	public static final String INTENT_EXTRA_KEY_IS_ACTIVE_SESSION = "intent_extra_key_is_active_session";
 	public static final String INTENT_EXTRA_KEY_PERFORM_ACTION = "intent_extra_key_perform_action";
 	public static final String INTENT_EXTRA_KEY_IS_SILENT_CALL = "intent_extra_key_is_silent_call";
+	public static final String INTENT_EXTRA_LINK_URL = "intent_extra_link_url";
+
 
 	
 	public static final String INTENT_EXTRA_VALUE_METHOD_GENERATED_FROM_SMS_RECEIVER = "intent_extra_value_method_generated_from_sms_receiver";
@@ -92,13 +94,16 @@ public class WipiwayUtils {
     public static final int MODE_PASSWORD_BREAK_ACTION_STAGE_ACTION = 1;
 
     // Actions that can be done by the app
-    public static final int ACTION_CALL = 1;
-    public static final int ACTION_CALL_ME = 2;
-    public static final int ACTION_CALL_ME_SILENT = 3;
-    public static final int ACTION_CALL_ME_PHONE = 4;
-    public static final int ACTION_CALL_ME_PHONE_SILENT = 5;
+    public static final int USER_ACTION_CALL = 1;
+    public static final int USER_ACTION_CALL_ME = 2;
+    public static final int USER_ACTION_CALL_ME_SILENT = 3;
+    public static final int USER_ACTION_CALL_ME_PHONE = 4;
+    public static final int USER_ACTION_CALL_ME_PHONE_SILENT = 5;
     
-    public static final int ACTION_GET_CONTACT = 6;
+    public static final int USER_ACTION_GET_CONTACT = 6;
+    public static final int USER_ACTION_GET_BATTERY = 7;
+    public static final int USER_ACTION_OPEN_LINK = 8;
+    
     
     public static final int STAGE_COMPLETE = 10;
 
@@ -355,8 +360,17 @@ public class WipiwayUtils {
 	 */
 	
 	public static void openUrl(Context context, String url) {
+		if (!url.startsWith("https://") && !url.startsWith("http://")){
+		    url = "http://" + url;
+		}
+		
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
+		//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		
+		Log.d("WipiwayController", "openUrl . Openning link - " + url);
+
+		
 		context.startActivity(i);
 	}
 	

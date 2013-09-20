@@ -34,8 +34,9 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		SmsMessage[] smsMessage = extractSmsMessage(intent);
 		String senderPhoneNumber = smsMessage[0].getDisplayOriginatingAddress();
 		String smsContent = smsMessage[0]
-				.getDisplayMessageBody().toLowerCase().trim();
+				.getDisplayMessageBody().trim();
 		ArrayList<String> wordsList = getWords(smsContent);
+		
 
 		
 		if (wordsList.size() > 0 ) {
@@ -85,7 +86,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
 	public ArrayList<String> getWords(String msg) {
 
-		StringTokenizer token = new StringTokenizer(msg, ".,! ()[]?");
+		StringTokenizer token = new StringTokenizer(msg, " ");
 
 		ArrayList<String> wordsList = new ArrayList<String>();
 

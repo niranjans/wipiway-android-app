@@ -22,7 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     // Columns for action_status Table
     public static final String C_ID = "id";
     public static final String C_PHONE_NUMBER = "phone_number";
-    public static final String C_INTENT = "intent";				// What was the intent of the user eg - call me / get location, etc
+    public static final String C_USER_ACTION = "user_action";				// What action was performed
     public static final String C_ARGUMENT1 = "argument1";
     public static final String C_ARGUMENT2 = "argument2";
     public static final String C_LOG_TEXT = "log_text";
@@ -35,7 +35,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     					+ " (" + C_ID + " integer primary key autoincrement, " 
     					+ 		 C_PHONE_NUMBER + " text,"
     					+		 C_ACTION_PERFORMED_DATE + " integer not null,"
-    					+		 C_INTENT + " integer,"
+    					+		 C_USER_ACTION + " integer,"
     					+		 C_ARGUMENT1 + " text,"
     					+		 C_ARGUMENT2 + " text,"
     					+		 C_LOG_TEXT + "text"

@@ -25,7 +25,7 @@ public class WipiwayDataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLiteHelper.C_PHONE_NUMBER, phoneNumber);
 		values.put(SQLiteHelper.C_ACTION_PERFORMED_DATE, System.currentTimeMillis()); 	// Current time
-		values.put(SQLiteHelper.C_INTENT, intent);
+		values.put(SQLiteHelper.C_USER_ACTION, intent);
 		values.put(SQLiteHelper.C_ARGUMENT1, argument1);
 		values.put(SQLiteHelper.C_ARGUMENT2, argument2);
 		

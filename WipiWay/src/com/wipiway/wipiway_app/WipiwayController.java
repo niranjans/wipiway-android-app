@@ -46,7 +46,7 @@ public class WipiwayController {
 		
 		if(word2.equalsIgnoreCase("call")) {
 			Intent intent = new Intent(context, StatusActivity.class);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
 			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
 			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
 			
@@ -71,7 +71,7 @@ public class WipiwayController {
 		if(word2.equalsIgnoreCase("call")) {
 			if(word3.equalsIgnoreCase("me")){				
 				Intent intent = new Intent(context, StatusActivity.class);
-				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
 				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
 				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
 				
@@ -84,7 +84,15 @@ public class WipiwayController {
 			}
 		} else if(word2.equalsIgnoreCase("open")) {
 			// Last word is a URL link
-			WipiwayUtils.openUrl(context, word3);	
+			Intent intent = new Intent(context, StatusActivity.class);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_OPEN_LINK);
+			intent.putExtra(WipiwayUtils.INTENT_EXTRA_LINK_URL, word3);
+			
+			
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            
+			
 		}
 	}
 	
@@ -94,7 +102,7 @@ public class WipiwayController {
 			if(word3.equalsIgnoreCase("me")){
 				if(word4.equalsIgnoreCase("silent")){
 					Intent intent = new Intent(context, StatusActivity.class);
-					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.ACTION_CALL_ME);
+					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
 					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
 					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, true);
 					

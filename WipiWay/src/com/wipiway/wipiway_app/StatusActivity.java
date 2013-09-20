@@ -4,6 +4,7 @@ package com.wipiway.wipiway_app;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -76,22 +77,26 @@ public class StatusActivity extends BaseActivity {
 	 * @param action Action to be performed. This could have been extracted from the intent but this has already been done before
 	 */
 	public void performAction(Intent intent, int action) {
-		
+		Context context = StatusActivity.this;
 		switch(action) {
-		case WipiwayUtils.ACTION_CALL:
-		case WipiwayUtils.ACTION_CALL_ME:
-		case WipiwayUtils.ACTION_CALL_ME_PHONE:
-		case WipiwayUtils.ACTION_CALL_ME_SILENT:
-		case WipiwayUtils.ACTION_CALL_ME_PHONE_SILENT:
+		case WipiwayUtils.USER_ACTION_CALL:
+		case WipiwayUtils.USER_ACTION_CALL_ME:
+		case WipiwayUtils.USER_ACTION_CALL_ME_PHONE:
+		case WipiwayUtils.USER_ACTION_CALL_ME_SILENT:
+		case WipiwayUtils.USER_ACTION_CALL_ME_PHONE_SILENT:
 			
 			String phoneNumber = intent.getStringExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER);
 			boolean isSilentCall = intent.getBooleanExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
 			
 			CallPhone callPhone = new CallPhone();
-			callPhone.startCall(StatusActivity.this, phoneNumber, isSilentCall);
+			callPhone.startCall(context, phoneNumber, isSilentCall);
 			
 			break;
-
+		
+		case WipiwayUtils.USER_ACTION_OPEN_LINK:
+			String url = intent.getStringExtra(WipiwayUtils.INTENT_EXTRA_LINK_URL);
+			WipiwayUtils.openUrl(context, url);	
+			break;
 			
 			
 		
