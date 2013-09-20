@@ -3,6 +3,7 @@ package com.wipiway.wipiway_app;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -37,13 +38,12 @@ public class WipiwayUtils {
 	public static final String INTENT_EXTRA_KEY_SMS_CONTENT = "intent_extra_key_sms_content";
 	public static final String INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST = "intent_extra_key_sms_content_arraylist";
 	public static final String INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER = "intent_extra_key_sms_sender_phone_number";
-	public static final String INTENT_EXTRA_KEY_IS_ACTIVE_SESSION = "intent_extra_key_is_active_session";
+	public static final String INTENT_EXTRA_KEY_IS_KEYWORD_PRESENT = "intent_extra_key_is_keyword_present";
 	public static final String INTENT_EXTRA_KEY_PERFORM_ACTION = "intent_extra_key_perform_action";
 	public static final String INTENT_EXTRA_KEY_IS_SILENT_CALL = "intent_extra_key_is_silent_call";
 	public static final String INTENT_EXTRA_LINK_URL = "intent_extra_link_url";
 
 
-	
 	public static final String INTENT_EXTRA_VALUE_METHOD_GENERATED_FROM_SMS_RECEIVER = "intent_extra_value_method_generated_from_sms_receiver";
 	public static final String INTENT_EXTRA_VALUE_ACTION_CALL = "intent_extra_key_action_call";
 	public static final String INTENT_EXTRA_VALUE_ACTION_CALL_SILENT = "intent_extra_key_action_call_silent";
@@ -56,27 +56,35 @@ public class WipiwayUtils {
 	public static final String PREFS_KEY_MODE = "prefs_key_mode";
 	public static final String PREFS_KEY_STAGE = "prefs_key_stage";
 	public static final String PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA = "prefs_key_active_session_string_extra";
-	
+	public static final String PREFS_KEY_ACTIVE_SESSION_ARRAYLIST_STRING_EXTRA = "prefs_key_active_session_arraylist_string_extra";
+
 	public static final long ACTIVE_SESSION_TIME_LIMIT = 120000;	// 2 mins - Time in milis 1000 * 60 * 2
    
-	public static final String COMMANDS_MENU = "Wipiway SMS Service\nReply with a command: Call me, Call me silent, Call [NUMBER], Get contact [NAME]";
+	public static final String REPLY_COMMANDS_MENU = "Wipiway SMS Service\nReply with a command: Call me, call me silent, get contact [NAME], get battery, open [LINK]";
+	public static final String REPLY_COMMAND_INVALID = "Sorry, that did not match the list of commands. Please try again.";
+	public static final String REPLY_ASK_FOR_PASSWORD = "Ok. Please provide the 4-digit security code.";
+	
 	
     /**
      * Complete command. Example: Wipiway 1234 call me
      */
     public static final int MODE_COMPLETE = 1;
+    
     /**
      * Example: Wipiway call me --> 1234
      */
     public static final int MODE_ACTION_BREAK_PASSWORD = 2;
+    
     /**
      * Example: Wipiway --> call me --> 1234
      */
     public static final int MODE_BREAK_ACTION_BREAK_PASSWORD = 3;
+    
     /**
      * Example: Wipiway --> call me 1234
      */
     public static final int MODE_BREAK_ACTION_PASSWORD = 4;
+    
     /**
      * Example: Wipiway 1234 --> call me
      */
@@ -104,6 +112,10 @@ public class WipiwayUtils {
     public static final int USER_ACTION_GET_BATTERY = 7;
     public static final int USER_ACTION_OPEN_LINK = 8;
     
+    public static final int USER_ACTION_INVALID = 0;
+    public static final int USER_ACTION_MENU = 50;
+
+    
     
     public static final int STAGE_COMPLETE = 10;
 
@@ -120,7 +132,25 @@ public class WipiwayUtils {
 	public static final int LENGTH_OF_REPLY_SMS_MESSAGE = 160;
 
 
+	public static ArrayList<String> splitInputStringIntoWords(String msg) {
 
+		StringTokenizer token = new StringTokenizer(msg, " ");
+
+		ArrayList<String> wordsList = new ArrayList<String>();
+
+		String nextWord;
+		while (token.hasMoreTokens()) {
+
+			nextWord = token.nextToken();
+			// Log.d(TAG, " inside getWords while loop.. nextToken - " +
+			// nextWord);
+
+			wordsList.add(nextWord);
+
+		}
+
+		return wordsList;
+	}
 	
 	public static boolean isFirstVisit(Context context) {
 		// Returns true if this is first visit of the user

@@ -32,8 +32,9 @@ public class WipiwayController {
 	 * 
 	 * @param phoneNumber Phone number associated with the action.
 	 */
-	public void logicNewCommandWords1(String phoneNumber){
+	public int logicNewCommandWords0(String phoneNumber){
 		sendMenuSms(phoneNumber);
+		return WipiwayUtils.USER_ACTION_MENU;
 	}
 	
 	/**
@@ -42,19 +43,19 @@ public class WipiwayController {
 	 * @param phoneNumber Phone number associated with the action.
 	 * @param word2 Second word in the message (where first word is the Trigger keyword)
 	 */
-	public void logicNewCommandWords2(String phoneNumber, String word2){
+	public int logicNewCommandWords1(String phoneNumber, boolean flagExecute, String word2){
+		
+		int userAction = WipiwayUtils.USER_ACTION_INVALID;
 		
 		if(word2.equalsIgnoreCase("call")) {
-			Intent intent = new Intent(context, StatusActivity.class);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
-			
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);		
+			if(flagExecute) executeCallAction(phoneNumber, false);          
+			userAction = WipiwayUtils.USER_ACTION_CALL;
 		} else if(word2.equalsIgnoreCase("battery")) {
-			WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
+			if(flagExecute) executeBatterySms(phoneNumber);
+			userAction = WipiwayUtils.USER_ACTION_GET_BATTERY;
 		}
+		
+		return userAction;
 	}
 	
 	
@@ -65,58 +66,55 @@ public class WipiwayController {
 	 * @param word2 Second word in the message (where first word is the Trigger keyword)
 	 * @param word3 Third word in the message 
 	 */
-	public void logicNewCommandWords3(String phoneNumber, String word2, String word3){
+	public int logicNewCommandWords2(String phoneNumber,boolean flagExecute, String word2, String word3){
 		Log.d("WipiwayController", "logicNewCommandWords3 - start");
-
+		
+		int userAction = WipiwayUtils.USER_ACTION_INVALID;
+		
 		if(word2.equalsIgnoreCase("call")) {
 			if(word3.equalsIgnoreCase("me")){				
-				Intent intent = new Intent(context, StatusActivity.class);
-				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
-				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
-				intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, false);
-				
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+				if(flagExecute) executeCallAction(phoneNumber, false);
+				userAction = WipiwayUtils.USER_ACTION_CALL_ME;
 			}
 		} else if(word2.equalsIgnoreCase("get")) {
 			if(word3.equalsIgnoreCase("battery")){
-				WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
-			}
+				if(flagExecute) executeBatterySms(phoneNumber);
+				userAction = WipiwayUtils.USER_ACTION_GET_BATTERY;			
+			} 
 		} else if(word2.equalsIgnoreCase("open")) {
 			// Last word is a URL link
-			Intent intent = new Intent(context, StatusActivity.class);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_OPEN_LINK);
-			intent.putExtra(WipiwayUtils.INTENT_EXTRA_LINK_URL, word3);
-			
-			
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-            
+			if(flagExecute) executeOpenUrl(word3);
+			userAction = WipiwayUtils.USER_ACTION_OPEN_LINK;
 			
 		}
+		
+		return userAction;
+
 	}
 	
-	public void logicNewCommandWords4(String phoneNumber, String word2, String word3, String word4){
+	public int logicNewCommandWords3(String phoneNumber, boolean flagExecute,  String word2, String word3, String word4){
+		
+		int userAction = WipiwayUtils.USER_ACTION_INVALID;
 		
 		if(word2.equalsIgnoreCase("call")) {
 			if(word3.equalsIgnoreCase("me")){
 				if(word4.equalsIgnoreCase("silent")){
-					Intent intent = new Intent(context, StatusActivity.class);
-					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
-					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
-					intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, true);
-					
-	                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-	                context.startActivity(intent);				}
-			} 
+					if(flagExecute) executeCallAction(phoneNumber, true);
+					userAction =  WipiwayUtils.USER_ACTION_CALL_ME_SILENT;			 
+				}
+			}
 		} else if(word2.equalsIgnoreCase("get")){
 			if(word3.equalsIgnoreCase("contact")){
-				WipiwayUtils.searchAndSendContactInfo(context, phoneNumber, word4);
-			}
+				if(flagExecute) executeGetContact(phoneNumber, word4);
+				userAction =  WipiwayUtils.USER_ACTION_GET_CONTACT;
+			}  
 		}
+		
+		return userAction;
+
 	}
 	
-	public void logicNewCommandWords5(String phoneNumber, String word2, String word3, String word4, String word5){
+	public void logicNewCommandWords4(String phoneNumber, String word2, String word3, String word4, String word5){
 		
 		if(word2.equalsIgnoreCase("get")){
 			if(word3.equalsIgnoreCase("contact")){
@@ -130,9 +128,17 @@ public class WipiwayController {
 	 * 
 	 * @param phoneNumber Phone number associated with the action.
 	 */
-	public void logicNewCommandWordsDefault(String phoneNumber){
+	public int logicNewCommandWordsDefault(String phoneNumber){
 		sendMenuSms(phoneNumber);
+		return WipiwayUtils.USER_ACTION_MENU;
+
 	}
+	
+	/* 
+	 * *****************************************************
+	 * Execution stuff
+	 * *****************************************************
+	 */
 	
 	/**
 	 * Method to send the Commands Menu of the SMS interface
@@ -140,7 +146,7 @@ public class WipiwayController {
 	 * @param phoneNumber The phone number that the message is to be sent to
 	 */
 	public void sendMenuSms(String phoneNumber){
-		WipiwayUtils.sendSms(phoneNumber, WipiwayUtils.COMMANDS_MENU);
+		WipiwayUtils.sendSms(phoneNumber, WipiwayUtils.REPLY_COMMANDS_MENU);
 		
 		// Set a new session with the assumed Mode and Stage whenever a new Menu Command is sent
 		WipiwayUtils.setActiveSessionPresent(context, phoneNumber);
@@ -148,6 +154,34 @@ public class WipiwayController {
 		WipiwayUtils.setActiveSessionStage(context, WipiwayUtils.MODE_BREAK_ACTION_BREAK_PASSWORD_STAGE_ACTION);
 	}
 	
+	
+	public void executeCallAction(String phoneNumber, boolean isSilent) {
+		Intent intent = new Intent(context, StatusActivity.class);
+		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
+		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
+		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_SILENT_CALL, isSilent);
+		
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+	}
+	
+	public void executeBatterySms(String phoneNumber) {
+		WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
+	}
+	
+	public void executeOpenUrl(String url) {
+		Intent intent = new Intent(context, StatusActivity.class);
+		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_OPEN_LINK);
+		intent.putExtra(WipiwayUtils.INTENT_EXTRA_LINK_URL, url);
+		
+		
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+	}
+	
+	public void executeGetContact(String phoneNumber, String searchName){
+		WipiwayUtils.searchAndSendContactInfo(context, phoneNumber, searchName);
+	}
 
 	/**
 	 * Method which returns a pre-initialized controller if possible (Singleton)

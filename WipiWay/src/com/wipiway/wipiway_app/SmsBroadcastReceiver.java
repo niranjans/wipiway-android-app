@@ -35,16 +35,15 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		String senderPhoneNumber = smsMessage[0].getDisplayOriginatingAddress();
 		String smsContent = smsMessage[0]
 				.getDisplayMessageBody().trim();
-		ArrayList<String> wordsList = getWords(smsContent);
-		
+		ArrayList<String> wordsList = WipiwayUtils.splitInputStringIntoWords(smsContent);
 
-		
 		if (wordsList.size() > 0 ) {
 			
-			Boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
+			boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
+			boolean isKeywordPresent = wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) ;
 			
 			// If message contains the keyword OR an active session with the Phone number is present
-			if( wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) || isActiveSession) {
+			if( isKeywordPresent || isActiveSession) {
 				
 				// Good to go, move forward
 				
@@ -53,7 +52,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
 						senderPhoneNumber);
 				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
-				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_ACTIVE_SESSION, isActiveSession);
+				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_KEYWORD_PRESENT, isKeywordPresent);
 				i.putStringArrayListExtra(
 						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
 
@@ -69,6 +68,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
 
 	}
+	
 
 	// Get the SMS content from the intent
 	public SmsMessage[] extractSmsMessage(Intent intent) {
@@ -84,24 +84,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		return smsMessage;
 	}
 
-	public ArrayList<String> getWords(String msg) {
 
-		StringTokenizer token = new StringTokenizer(msg, " ");
-
-		ArrayList<String> wordsList = new ArrayList<String>();
-
-		String nextWord;
-		while (token.hasMoreTokens()) {
-
-			nextWord = token.nextToken();
-			// Log.d(TAG, " inside getWords while loop.. nextToken - " +
-			// nextWord);
-
-			wordsList.add(nextWord);
-
-		}
-
-		return wordsList;
-	}
 
 }
