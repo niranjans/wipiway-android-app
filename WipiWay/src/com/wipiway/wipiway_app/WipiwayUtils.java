@@ -42,8 +42,12 @@ public class WipiwayUtils {
 	public static final String INTENT_EXTRA_KEY_PERFORM_ACTION = "intent_extra_key_perform_action";
 	public static final String INTENT_EXTRA_KEY_IS_SILENT_CALL = "intent_extra_key_is_silent_call";
 	public static final String INTENT_EXTRA_LINK_URL = "intent_extra_link_url";
+	public static final String INTENT_EXTRA_KEY_PASSCODE_FLOW = "INTENT_EXTRA_KEY_PASSCODE_FLOW";
 
 
+	public static final int INTENT_EXTRA_VALUE_NEW_PASSCODE_FLOW = 1;
+	public static final int INTENT_EXTRA_VALUE_CHANGE_PASSCODE_FLOW = 2;
+	
 	public static final String INTENT_EXTRA_VALUE_METHOD_GENERATED_FROM_SMS_RECEIVER = "intent_extra_value_method_generated_from_sms_receiver";
 	public static final String INTENT_EXTRA_VALUE_ACTION_CALL = "intent_extra_key_action_call";
 	public static final String INTENT_EXTRA_VALUE_ACTION_CALL_SILENT = "intent_extra_key_action_call_silent";
@@ -57,13 +61,16 @@ public class WipiwayUtils {
 	public static final String PREFS_KEY_STAGE = "prefs_key_stage";
 	public static final String PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA = "prefs_key_active_session_string_extra";
 	public static final String PREFS_KEY_ACTIVE_SESSION_ARRAYLIST_STRING_EXTRA = "prefs_key_active_session_arraylist_string_extra";
+	public static final String PREFS_KEY_PASSCODE = "prefs_key_passcode";
+
 
 	public static final long ACTIVE_SESSION_TIME_LIMIT = 120000;	// 2 mins - Time in milis 1000 * 60 * 2
    
 	public static final String REPLY_COMMANDS_MENU = "Wipiway SMS Service\nReply with a command: Call me, call me silent, get contact [NAME], get battery, open [LINK]";
 	public static final String REPLY_COMMAND_INVALID = "Sorry, that did not match the list of commands. Please try again.";
-	public static final String REPLY_ASK_FOR_PASSWORD = "Ok. Please provide the 4-digit security code.";
-	
+	public static final String REPLY_ASK_FOR_PASSWORD = "Ok. Please provide the 4-digit security passcode.";
+	public static final String REPLY_INCORRECT_PASSCODE = "Passcode did not match. Request cancelled.";
+
 	
     /**
      * Complete command. Example: Wipiway 1234 call me
@@ -412,6 +419,38 @@ public class WipiwayUtils {
 		
 		context.startActivity(i);
 	}
+	/* 
+	 * *****************************************************
+	 * Passcode stuff 
+	 * *****************************************************
+	 */
+	
+	public static void setPasscode(Context context, String passcode) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		prefs.edit().putString(PREFS_KEY_PASSCODE, passcode).commit();
+
+	}
+	
+	public static boolean isPasscodeSet(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+
+		if(prefs.getString(PREFS_KEY_PASSCODE, null) != null)
+			return true;
+		else
+			return false;
+	}
+	
+	public static boolean isCorrectPasscode(Context context, String inputPasscode) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+
+		if(prefs.getString(PREFS_KEY_PASSCODE, null).contentEquals(inputPasscode))
+			return true;
+		else
+			return false;
+
+	}
+	
 	
 	/* 
 	 * *****************************************************

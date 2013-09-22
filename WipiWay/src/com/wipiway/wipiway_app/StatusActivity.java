@@ -1,6 +1,7 @@
 package com.wipiway.wipiway_app;
 
 
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -20,8 +21,7 @@ import android.widget.Button;
  */
 public class StatusActivity extends BaseActivity {
 	 private int action;
-	
-	
+
 
     public StatusActivity() {
 		super(R.string.title_status_page);
@@ -41,6 +41,16 @@ public class StatusActivity extends BaseActivity {
         action = intent.getIntExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, 0);
         if( action != 0) {
         	performAction(intent, action);
+        }
+        
+        
+        if(!WipiwayUtils.isPasscodeSet(this)){
+        	Intent i = new Intent(this, PasscodeActivity.class);
+        	i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PASSCODE_FLOW, WipiwayUtils.INTENT_EXTRA_VALUE_NEW_PASSCODE_FLOW);
+        	startActivity(i);
+        	
+        	finish(); // Clears this current activity from the back stack
+        	
         }
         
         // Comment of http://stackoverflow.com/a/3859298/804503 -- time_ago_in_words

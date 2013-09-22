@@ -84,10 +84,16 @@ public class SmsIntentService extends IntentService {
 						break;
 					case WipiwayUtils.MODE_BREAK_ACTION_BREAK_PASSWORD_STAGE_PASSWORD:
 						
-						// TODO check for PIN code
-							// If PIN code matches, do the following
-							wordsList = WipiwayUtils.splitInputStringIntoWords(WipiwayUtils.getActiveSessionStringExtra(context));
-							matchCommand(true); // Already checked earlier (in above case) that command matches
+							if(WipiwayUtils.isCorrectPasscode(context, wordsList.get(0))){
+								// If PIN code matches, do the following
+								wordsList = WipiwayUtils.splitInputStringIntoWords(WipiwayUtils.getActiveSessionStringExtra(context));
+								matchCommand(true); // Already checked earlier (in above case) that command matches
+							} else {
+								// Do not change the active session details. The user can try again with a command. Or start over.
+								WipiwayUtils.sendSms(senderPhoneNumber, WipiwayUtils.REPLY_INCORRECT_PASSCODE);
+								WipiwayUtils.resetActiveSessionPresent(context);
+							}
+
 						
 						break;
 					default:
