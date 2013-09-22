@@ -108,6 +108,10 @@ public class SmsIntentService extends IntentService {
 			
 			break;
 		case WipiwayUtils.MODE_YES_MORE:
+				if(wordsList.get(0).equalsIgnoreCase("yes") || wordsList.get(0).equalsIgnoreCase("y") || wordsList.get(0).equalsIgnoreCase("more")){
+					WipiwayUtils.sendSms(senderPhoneNumber, WipiwayUtils.getActiveSessionStringExtra(context)); // need to test
+					WipiwayUtils.resetActiveSessionPresent(context);
+				}
 			
 			break;
 		default:

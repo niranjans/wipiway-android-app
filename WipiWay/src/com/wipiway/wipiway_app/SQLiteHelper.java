@@ -18,7 +18,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     public static final String TABLE_ACTION_HISTORY = "action_history";
-    
+     
     // Columns for action_status Table
     public static final String C_ID = "id";
     public static final String C_PHONE_NUMBER = "phone_number";
@@ -38,7 +38,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     					+		 C_USER_ACTION + " integer,"
     					+		 C_ARGUMENT1 + " text,"
     					+		 C_ARGUMENT2 + " text,"
-    					+		 C_LOG_TEXT + "text"
+    					+		 C_LOG_TEXT + " text"
     					+ " );";
     
 	 

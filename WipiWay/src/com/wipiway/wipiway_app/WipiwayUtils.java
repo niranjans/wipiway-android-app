@@ -204,6 +204,14 @@ public class WipiwayUtils {
 		} catch (Exception e) {
 			Log.d("WipiwayController", e.toString());
 		}  
+        
+        // Show in outbox - http://stackoverflow.com/a/3873328/804503
+        /*
+         *  ContentValues values = new ContentValues();
+			   values.put("address", phone);
+			   values.put("body", message);
+			   getContentResolver().insert(Uri.parse("content://sms/sent"), values);
+         */
 
 		
 	}

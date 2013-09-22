@@ -83,7 +83,7 @@ public class WipiwayController {
 			} 
 		} else if(word2.equalsIgnoreCase("open")) {
 			// Last word is a URL link
-			if(flagExecute) executeOpenUrl(word3);
+			if(flagExecute) executeOpenUrl(phoneNumber, word3);
 			userAction = WipiwayUtils.USER_ACTION_OPEN_LINK;
 			
 		}
@@ -156,6 +156,9 @@ public class WipiwayController {
 	
 	
 	public void executeCallAction(String phoneNumber, boolean isSilent) {
+		WipiwayDataSource datasource = new WipiwayDataSource(context);
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_CALL, null, null, "Called back");
+		
 		Intent intent = new Intent(context, StatusActivity.class);
 		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
 		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER, phoneNumber);
@@ -166,10 +169,17 @@ public class WipiwayController {
 	}
 	
 	public void executeBatterySms(String phoneNumber) {
+		WipiwayDataSource datasource = new WipiwayDataSource(context);
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_GET_BATTERY, null, null, "Sent battery info");
+		
 		WipiwayUtils.sendBatteryLevelSms(context, phoneNumber);
 	}
 	
-	public void executeOpenUrl(String url) {
+	public void executeOpenUrl(String phoneNumber, String url) {
+		  
+		WipiwayDataSource datasource = new WipiwayDataSource(context);
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_OPEN_LINK, url, null, "Opened link " + url);
+		
 		Intent intent = new Intent(context, StatusActivity.class);
 		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_OPEN_LINK);
 		intent.putExtra(WipiwayUtils.INTENT_EXTRA_LINK_URL, url);
@@ -180,6 +190,10 @@ public class WipiwayController {
 	}
 	
 	public void executeGetContact(String phoneNumber, String searchName){
+		
+		WipiwayDataSource datasource = new WipiwayDataSource(context);
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_GET_CONTACT, searchName, null, "Searched for contact " + searchName);
+		
 		WipiwayUtils.searchAndSendContactInfo(context, phoneNumber, searchName);
 	}
 

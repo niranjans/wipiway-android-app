@@ -28,6 +28,7 @@ public class WipiwayDataSource {
 		values.put(SQLiteHelper.C_USER_ACTION, intent);
 		values.put(SQLiteHelper.C_ARGUMENT1, argument1);
 		values.put(SQLiteHelper.C_ARGUMENT2, argument2);
+		values.put(SQLiteHelper.C_LOG_TEXT, logText);
 		
 		database.insert(SQLiteHelper.TABLE_ACTION_HISTORY, null, values);
 		
