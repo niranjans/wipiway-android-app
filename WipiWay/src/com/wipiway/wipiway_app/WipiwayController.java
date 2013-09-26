@@ -157,7 +157,7 @@ public class WipiwayController {
 	
 	public void executeCallAction(String phoneNumber, boolean isSilent) {
 		WipiwayDataSource datasource = new WipiwayDataSource(context);
-		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_CALL, null, null, "Called back");
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_CALL, null, null, "Called back " + phoneNumber);
 		
 		Intent intent = new Intent(context, StatusActivity.class);
 		intent.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_PERFORM_ACTION, WipiwayUtils.USER_ACTION_CALL_ME);
