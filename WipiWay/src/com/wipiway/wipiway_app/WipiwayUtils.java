@@ -121,7 +121,11 @@ public class WipiwayUtils {
     
     public static final int USER_ACTION_INVALID = 0;
     public static final int USER_ACTION_MENU = 50;
-
+    
+    public static final int ICON_CALL = 1;
+    public static final int ICON_TEXT = 2;
+    public static final int ICON_BATTERY = 3;
+    public static final int ICON_LINK = 4;
     
     
     public static final int STAGE_COMPLETE = 10;

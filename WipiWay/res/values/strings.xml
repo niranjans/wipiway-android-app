@@ -10,6 +10,7 @@
     <string name="enter_new_passcode">Enter your new passcode</string>
     <string name="enter_your_current_passcode">Enter your current passcode</string>
 	<string name="re_enter_new_passcode">Re-enter your passcode</string>
+	<string name="recent_activity">Recent Activity</string>
     
 
 </resources>

@@ -1,6 +1,9 @@
 package com.wipiway.wipiway_app;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.app.Activity;
@@ -9,9 +12,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * @author Niranjan Singh - singh@wipiway.com
@@ -21,7 +30,6 @@ import android.widget.Button;
  */
 public class StatusActivity extends BaseActivity {
 	 private int action;
-
 
     public StatusActivity() {
 		super(R.string.title_status_page);
@@ -53,11 +61,29 @@ public class StatusActivity extends BaseActivity {
         	
         }
         
+        populateRecentActivity();
+        
+        
         // Comment of http://stackoverflow.com/a/3859298/804503 -- time_ago_in_words
        // DateUtils.getRelativeTimeSpanString(startTime);
 
     }
 	
+
+
+	private void populateRecentActivity() {
+		
+		WipiwayDataSource datasource = new WipiwayDataSource(StatusActivity.this);
+		
+		ArrayList<RecentLog> recentLogList = datasource.getRecentLogList();
+		
+		ListView listViewRecentActivity = (ListView) findViewById(R.id.listViewRecentActivity);
+		
+
+		listViewRecentActivity.setAdapter(new RecentLogListAdapter(recentLogList, StatusActivity.this));
+		listViewRecentActivity.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+	}
 
 
 	@Override
@@ -72,6 +98,73 @@ public class StatusActivity extends BaseActivity {
 
 
 		
+	}
+	
+	private class RecentLogListAdapter extends BaseAdapter {
+		private ArrayList<RecentLog> recentLogList;
+		private LayoutInflater layoutInflater;
+
+		public RecentLogListAdapter(ArrayList<RecentLog> recentLogList,
+				Context context) {
+
+			this.recentLogList = recentLogList;
+			layoutInflater = LayoutInflater.from(context);
+
+		}
+
+		public int getCount() {
+			return recentLogList.size();
+		}
+
+		public Object getItem(int position) {
+			return recentLogList.get(position);
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			ViewHolder myViewHolder = null;
+
+			if (convertView == null) {
+				convertView = layoutInflater
+						.inflate(R.layout.recent_activity_row, null);
+
+				myViewHolder = new ViewHolder();
+				myViewHolder.textViewLogText = (TextView) convertView
+						.findViewById(R.id.textViewLogText);
+				myViewHolder.textViewTimeAgo = (TextView) convertView
+						.findViewById(R.id.textViewTimeAgo);
+				myViewHolder.imageViewIcon = (ImageView) convertView
+						.findViewById(R.id.row_icon);
+
+				convertView.setTag(myViewHolder);
+
+			} else {
+				myViewHolder = (ViewHolder) convertView.getTag();
+			}
+
+			myViewHolder.textViewLogText.setText(recentLogList.get(
+					position).getLogText());
+			myViewHolder.textViewTimeAgo.setText(recentLogList.get(
+					position).getTimeAgo());
+			
+			myViewHolder.imageViewIcon.setImageResource(recentLogList
+					.get(position).getIconResourceId());
+
+			return convertView;
+		}
+
+		class ViewHolder {
+			TextView textViewLogText = null;
+			TextView textViewTimeAgo = null;
+
+			ImageView imageViewIcon = null;
+
+		}
+
 	}
 	
 	/**
