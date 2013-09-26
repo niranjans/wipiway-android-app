@@ -36,7 +36,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		String smsContent = smsMessage[0]
 				.getDisplayMessageBody().trim();
 		ArrayList<String> wordsList = WipiwayUtils.splitInputStringIntoWords(smsContent);
-
+		
 		if (wordsList.size() > 0 ) {
 			
 			boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
