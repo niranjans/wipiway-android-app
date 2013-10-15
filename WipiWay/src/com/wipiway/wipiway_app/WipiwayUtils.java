@@ -62,6 +62,8 @@ public class WipiwayUtils {
 	public static final String PREFS_KEY_ACTIVE_SESSION_STRING_EXTRA = "prefs_key_active_session_string_extra";
 	public static final String PREFS_KEY_ACTIVE_SESSION_ARRAYLIST_STRING_EXTRA = "prefs_key_active_session_arraylist_string_extra";
 	public static final String PREFS_KEY_PASSCODE = "prefs_key_passcode";
+	public static final String PREFS_CONTROLLER_STATUS = "prefs_controller_status";
+
 
 
 	public static final long ACTIVE_SESSION_TIME_LIMIT = 120000;	// 2 mins - Time in milis 1000 * 60 * 2
@@ -462,6 +464,28 @@ public class WipiwayUtils {
 			return false;
 
 	}
+
+	/* 
+	 * *****************************************************
+	 * Wipiway controller status tracking stuff
+	 * *****************************************************
+	 */
+	
+	public static boolean isControllerEnabled(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+		
+		// By default, when first time used, status is enabled
+		return prefs.getBoolean(PREFS_CONTROLLER_STATUS, true);
+		
+	}
+	
+	public static void setControllerValue(Context context, boolean value){
+		
+		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+
+		prefs.edit().putBoolean(PREFS_CONTROLLER_STATUS, value).commit();
+	}
+	
 	
 	
 	/* 

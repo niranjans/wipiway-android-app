@@ -3,6 +3,7 @@ package com.wipiway.wipiway_app;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
@@ -18,8 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 /**
@@ -30,6 +34,7 @@ import android.widget.TextView;
  */
 public class StatusActivity extends BaseActivity {
 	 private int action;
+	 private Switch controllerSwitch;
 
     public StatusActivity() {
 		super(R.string.title_status_page);
@@ -61,6 +66,22 @@ public class StatusActivity extends BaseActivity {
         	
         }
         
+        controllerSwitch = (Switch) findViewById(R.id.switch1);
+        
+        
+        
+        if(WipiwayUtils.isControllerEnabled(StatusActivity.this))
+        	controllerSwitch.setChecked(true);
+        else
+        	controllerSwitch.setChecked(false);
+        	
+        
+        controllerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            	WipiwayUtils.setControllerValue(StatusActivity.this, isChecked);
+            }
+        });
+        
         populateRecentActivity();
         
         
@@ -75,16 +96,21 @@ public class StatusActivity extends BaseActivity {
 		
 		WipiwayDataSource datasource = new WipiwayDataSource(StatusActivity.this);
 		
-		ArrayList<RecentLog> recentLogList = datasource.getRecentLogList();
-		
+		List<RecentLog> recentLogList = datasource.getRecentLogList();
+		 
 		ListView listViewRecentActivity = (ListView) findViewById(R.id.listViewRecentActivity);
 		
+		LayoutInflater inflater = getLayoutInflater();
+	    ViewGroup header = (ViewGroup) inflater.inflate(R.layout.recent_activity_header,
+	            listViewRecentActivity, false);
+		
+		listViewRecentActivity.addHeaderView(header, null, false);
 
 		listViewRecentActivity.setAdapter(new RecentLogListAdapter(recentLogList, StatusActivity.this));
 		listViewRecentActivity.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 	}
-
+ 
 
 	@Override
 	public void onNewIntent(Intent intent){
@@ -101,10 +127,10 @@ public class StatusActivity extends BaseActivity {
 	}
 	
 	private class RecentLogListAdapter extends BaseAdapter {
-		private ArrayList<RecentLog> recentLogList;
+		private List<RecentLog> recentLogList;
 		private LayoutInflater layoutInflater;
 
-		public RecentLogListAdapter(ArrayList<RecentLog> recentLogList,
+		public RecentLogListAdapter(List<RecentLog> recentLogList,
 				Context context) {
 
 			this.recentLogList = recentLogList;
@@ -139,7 +165,7 @@ public class StatusActivity extends BaseActivity {
 						.findViewById(R.id.textViewTimeAgo);
 				myViewHolder.imageViewIcon = (ImageView) convertView
 						.findViewById(R.id.row_icon);
-
+ 
 				convertView.setTag(myViewHolder);
 
 			} else {

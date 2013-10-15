@@ -12,23 +12,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".StatusActivity" >
 
-    <ToggleButton
-        android:id="@+id/toggleButton1"
+    <Switch
+        android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ToggleButton" />
-
-    <TextView
-        android:id="@+id/textViewRecentActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/recent_activity"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:paddingTop="10dp"
+        android:text="@string/wipiway_controller" 
+ 		android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
         android:id="@+id/listViewRecentActivity"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp" >
+
     </ListView>
 
 </LinearLayout>

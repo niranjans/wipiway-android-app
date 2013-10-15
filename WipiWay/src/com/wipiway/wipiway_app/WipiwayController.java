@@ -192,7 +192,7 @@ public class WipiwayController {
 	public void executeGetContact(String phoneNumber, String searchName){
 		
 		WipiwayDataSource datasource = new WipiwayDataSource(context);
-		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_GET_CONTACT, searchName, null, "Searched for contact " + searchName);
+		datasource.insertActionHistory(phoneNumber, WipiwayUtils.USER_ACTION_GET_CONTACT, searchName, null, "Searched for contact '" + searchName + "'");
 		
 		WipiwayUtils.searchAndSendContactInfo(context, phoneNumber, searchName);
 	}

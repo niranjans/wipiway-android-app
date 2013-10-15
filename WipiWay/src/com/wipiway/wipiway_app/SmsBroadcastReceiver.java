@@ -29,7 +29,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 		messageReceivedTime.setToNow();
 		
 		
-		
+		 
 		// Initializing and getting message details
 		SmsMessage[] smsMessage = extractSmsMessage(intent);
 		String senderPhoneNumber = smsMessage[0].getDisplayOriginatingAddress();
@@ -37,33 +37,36 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 				.getDisplayMessageBody().trim();
 		ArrayList<String> wordsList = WipiwayUtils.splitInputStringIntoWords(smsContent);
 		
-		if (wordsList.size() > 0 ) {
-			
-			boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
-			boolean isKeywordPresent = wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) ;
-			
-			// If message contains the keyword OR an active session with the Phone number is present
-			if( isKeywordPresent || isActiveSession) {
-				
-				// Good to go, move forward
-				
-				Intent i = new Intent(context, SmsIntentService.class);
-			    
-				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
-						senderPhoneNumber);
-				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
-				i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_KEYWORD_PRESENT, isKeywordPresent);
-				i.putStringArrayListExtra(
-						WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
-
-				Log.d("SmsBroadcastReceiver", "just before starting service");
-
-				
-				// Start the intent service
-			    context.startService(i);
-				
-			}
 		
+		if(WipiwayUtils.isControllerEnabled(context)){		// Check if app enabled
+			if (wordsList.size() > 0 ) {
+				
+				boolean isActiveSession = WipiwayUtils.isActiveSessionPresent(context, senderPhoneNumber);
+				boolean isKeywordPresent = wordsList.get(0).toString().equalsIgnoreCase(WipiwayUtils.SMS_TRIGGER_KEYWORD) ;
+				
+				// If message contains the keyword OR an active session with the Phone number is present
+				if( isKeywordPresent || isActiveSession) {
+					
+					// Good to go, move forward
+					
+					Intent i = new Intent(context, SmsIntentService.class);
+				    
+					i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_SENDER_PHONE_NUMBER,
+							senderPhoneNumber);
+					i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT, smsContent);
+					i.putExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_KEYWORD_PRESENT, isKeywordPresent);
+					i.putStringArrayListExtra(
+							WipiwayUtils.INTENT_EXTRA_KEY_SMS_CONTENT_ARRAYLIST, wordsList);
+	
+					Log.d("SmsBroadcastReceiver", "just before starting service");
+	
+					
+					// Start the intent service
+				    context.startService(i);
+					
+				}
+			
+			}
 		}
 
 

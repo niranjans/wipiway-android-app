@@ -1,6 +1,7 @@
 package com.wipiway.wipiway_app;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -37,7 +38,7 @@ public class WipiwayDataSource {
 		
 	}
 	
-	public ArrayList<RecentLog> getRecentLogList(){
+	public List<RecentLog> getRecentLogList(){
 		
 		SQLiteDatabase database = dbHelper.getReadableDatabase();
 		
@@ -46,7 +47,7 @@ public class WipiwayDataSource {
 		String query = "Select " + SQLiteHelper.C_ACTION_PERFORMED_DATE + ", " +  SQLiteHelper.C_USER_ACTION + ", " + SQLiteHelper.C_LOG_TEXT + 
 				" from " + SQLiteHelper.TABLE_ACTION_HISTORY + " order by " + SQLiteHelper.C_ACTION_PERFORMED_DATE + " DESC";
 		
-		ArrayList<RecentLog> recentLogList = new ArrayList<RecentLog>();
+		List<RecentLog> recentLogList = new ArrayList<RecentLog>();
 		
 		Cursor cursor = database.rawQuery(query,null);
 		cursor.moveToFirst();
@@ -85,6 +86,7 @@ public class WipiwayDataSource {
 			recentLogList.add(new RecentLog(iconResourceId, 
 					cursor.getString(2), 
 					DateUtils.getRelativeTimeSpanString(cursor.getInt(0)).toString()));
+			cursor.moveToNext();
 		}
 		
 		cursor.close();
