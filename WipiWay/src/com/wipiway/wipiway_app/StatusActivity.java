@@ -35,6 +35,11 @@ import android.widget.TextView;
 public class StatusActivity extends BaseActivity {
 	 private int action;
 	 private Switch controllerSwitch;
+	 List<RecentLog> recentLogList;
+	 WipiwayDataSource datasource;
+	 ListView listViewRecentActivity;
+	 
+	 private RecentLogListAdapter logListAdapter;
 
     public StatusActivity() {
 		super(R.string.title_status_page);
@@ -48,6 +53,10 @@ public class StatusActivity extends BaseActivity {
         setContentView(R.layout.activity_status);
         
         setSlidingActionBarEnabled(false);
+        
+		Log.d("StatucActivity", "on create");
+
+        
         
         // Always gets a value only if generated from the service
         Intent intent = getIntent();
@@ -82,6 +91,7 @@ public class StatusActivity extends BaseActivity {
             }
         });
         
+        listViewRecentActivity = (ListView) findViewById(R.id.listViewRecentActivity);
         populateRecentActivity();
         
         
@@ -94,11 +104,10 @@ public class StatusActivity extends BaseActivity {
 
 	private void populateRecentActivity() {
 		
-		WipiwayDataSource datasource = new WipiwayDataSource(StatusActivity.this);
+		datasource = new WipiwayDataSource(StatusActivity.this);
 		
-		List<RecentLog> recentLogList = datasource.getRecentLogList();
-		 
-		ListView listViewRecentActivity = (ListView) findViewById(R.id.listViewRecentActivity);
+		recentLogList = datasource.getRecentLogList();
+	
 		
 		LayoutInflater inflater = getLayoutInflater();
 	    ViewGroup header = (ViewGroup) inflater.inflate(R.layout.recent_activity_header,
@@ -106,11 +115,25 @@ public class StatusActivity extends BaseActivity {
 		
 		listViewRecentActivity.addHeaderView(header, null, false);
 
-		listViewRecentActivity.setAdapter(new RecentLogListAdapter(recentLogList, StatusActivity.this));
+		logListAdapter = new RecentLogListAdapter(recentLogList, StatusActivity.this);		
+		listViewRecentActivity.setAdapter(logListAdapter);
 		listViewRecentActivity.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
+		
+		
 	}
- 
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		
+		Log.d("StatucActivity", "on resume");
+
+		datasource = new WipiwayDataSource(StatusActivity.this);
+		
+		recentLogList = datasource.getRecentLogList();
+		logListAdapter.updateLogList(recentLogList);
+	}
 
 	@Override
 	public void onNewIntent(Intent intent){
@@ -136,6 +159,12 @@ public class StatusActivity extends BaseActivity {
 			this.recentLogList = recentLogList;
 			layoutInflater = LayoutInflater.from(context);
 
+		}
+		
+		public void updateLogList(List<RecentLog> recentLogList) {
+			this.recentLogList.clear();
+			this.recentLogList.addAll(recentLogList);
+		    this.notifyDataSetChanged();
 		}
 
 		public int getCount() {

@@ -9,14 +9,14 @@
     <string name="title_activity_passcode">PasscodeActivity</string>
     <string name="enter_new_passcode">Enter your new passcode</string>
     <string name="enter_your_current_passcode">Enter your current passcode</string>
-	<string name="re_enter_new_passcode">Re-enter your passcode</string>
-	<string name="recent_activity">Recent Activity</string>
-	<string name="recent_acitivity_header">Recent Activity</string>
-	<string name="app_status">App Status:</string>
-	<string name="capital_enabled">ENABLED</string>
-	<string name="capital_disabled">DISABLED</string>
-	<string name="wipiway_status">Wipiway Status:</string>
-	<string name="wipiway_controller">Wipiway Controller:</string>
-    
+    <string name="re_enter_new_passcode">Re-enter your passcode</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="recent_acitivity_header">Recent Activity</string>
+    <string name="app_status">App Status:</string>
+    <string name="capital_enabled">ENABLED</string>
+    <string name="capital_disabled">DISABLED</string>
+    <string name="wipiway_status">Wipiway Status:</string>
+    <string name="wipiway_controller">Wipiway Controller:</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

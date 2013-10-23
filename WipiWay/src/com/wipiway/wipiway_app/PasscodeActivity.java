@@ -23,6 +23,7 @@ public class PasscodeActivity extends Activity {
 	private String passcodeAttempt2;
 	
 	private boolean isFirstAttempt;
+	private boolean flagCheckingCurrentPasscode=false;
 	
 	private int passcodeFlow;
 	
@@ -51,7 +52,7 @@ public class PasscodeActivity extends Activity {
 
 			break;
 		case WipiwayUtils.INTENT_EXTRA_VALUE_CHANGE_PASSCODE_FLOW:
-			
+			changePasscode();
 			break;
 		default:
 			break;
@@ -61,6 +62,15 @@ public class PasscodeActivity extends Activity {
 		
 	}
 	
+	private void changePasscode() {
+		flagCheckingCurrentPasscode = true;
+		resetPasscodeInput(getResources().getString(R.string.enter_your_current_passcode), true);
+
+		
+	}
+
+
+
 	private void resetPasscodeInput(String labelText, boolean isFirstAttempt){
 		
 		this.isFirstAttempt = isFirstAttempt;
@@ -150,25 +160,53 @@ public class PasscodeActivity extends Activity {
 	private void checkInput() {
 		Log.d("PasscodeActivity", "checkInput - " + p1+p2+p3+p4);
 		
-		if(isFirstAttempt){
+		if(flagCheckingCurrentPasscode){
+			// First check current passcode
 			passcodeAttempt1 = p1+p2+p3+p4;
-			resetPasscodeInput(getResources().getString(R.string.re_enter_new_passcode), false);
-			return;
-		} else {
-			passcodeAttempt2 = p1+p2+p3+p4;
-			if(passcodeAttempt1.contentEquals(passcodeAttempt2)) {
-
-				WipiwayUtils.setPasscode(PasscodeActivity.this, passcodeAttempt1);
-				Toast.makeText(getApplicationContext(), "Passcode saved", Toast.LENGTH_LONG).show();
-				
-				Intent i = new Intent(PasscodeActivity.this, StatusActivity.class);
-				startActivity(i);
-				
-			} else {
-				Toast.makeText(getApplicationContext(), "Passcode does not match", Toast.LENGTH_LONG).show();
+			
+			if(WipiwayUtils.isCorrectPasscode(PasscodeActivity.this, passcodeAttempt1)){
+				flagCheckingCurrentPasscode = false;
 				resetPasscodeInput(getResources().getString(R.string.enter_new_passcode), true);
+			} else {
+				// flagCheckingCurrentPasscode is still set so process will repeat
+				Toast.makeText(getApplicationContext(), "Wrong Passcode! Try Again.", Toast.LENGTH_LONG).show();
+				resetPasscodeInput(getResources().getString(R.string.enter_your_current_passcode), true);
+				
 			}
+ 
+			
+		} else {
+			
+			if(isFirstAttempt){
+				passcodeAttempt1 = p1+p2+p3+p4;
+				resetPasscodeInput(getResources().getString(R.string.re_enter_new_passcode), false);
+				return;
+			} else {
+				passcodeAttempt2 = p1+p2+p3+p4;
+				if(passcodeAttempt1.contentEquals(passcodeAttempt2)) {
+
+					WipiwayUtils.setPasscode(PasscodeActivity.this, passcodeAttempt1);
+					Toast.makeText(getApplicationContext(), "Passcode saved", Toast.LENGTH_LONG).show();
+					
+					Intent i;
+					
+					if(passcodeFlow == WipiwayUtils.INTENT_EXTRA_VALUE_NEW_PASSCODE_FLOW)
+						 i = new Intent(PasscodeActivity.this, StatusActivity.class);
+					else
+						 i = new Intent(PasscodeActivity.this, SettingsActivity.class);
+
+					i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+					startActivity(i);
+					
+				} else {
+					Toast.makeText(getApplicationContext(), "Passcode does not match", Toast.LENGTH_LONG).show();
+					resetPasscodeInput(getResources().getString(R.string.re_enter_new_passcode), false);
+				}
+			}
+			
 		}
+		
+ 
 		
 		
 	}

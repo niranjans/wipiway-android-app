@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="SECURITY">
+        <Preference android:title="Change Security Code" android:key="prefsKeyPasscode"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="GENERAL">
+        <Preference android:title="Like us on Facebook"/>
+        <Preference android:title="Follow us on Twitter"/>
+        <Preference android:title="Credits"/>
+        <Preference android:title="Version"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>

@@ -40,6 +40,20 @@ public class SmsIntentService extends IntentService {
 		if(intent.getBooleanExtra(WipiwayUtils.INTENT_EXTRA_KEY_IS_KEYWORD_PRESENT, false)) {
 			
 			wordsList.remove(0);	// Remove the keyword, not needed anymore
+			
+			if(wordsList.size()>0) {
+				// check passcode
+				if(WipiwayUtils.isCorrectPasscode(context,wordsList.get(0))){
+					
+					wordsList.remove(0); // Remove passcode and proceed
+					
+				} else {
+					WipiwayUtils.sendSms(senderPhoneNumber, WipiwayUtils.REPLY_INCORRECT_PASSCODE);
+					return;
+				}
+					
+			}
+			
 			// Execute a new command
 			int userAction = matchCommand(true);
 			if(userAction == WipiwayUtils.USER_ACTION_INVALID) {
